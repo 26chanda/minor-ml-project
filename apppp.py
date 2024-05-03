@@ -40,8 +40,7 @@ music = pickle.load(open('df.pk1','rb'))
 similarity = pickle.load(open('similarity.pkl','rb'))
 
 music_list = music['song'].values
-selected_movie = st.selectbox(
-    "Type or select a song from the dropdown",
+selected_music = st.selectbox("search the song",
     music_list
 )
 
