@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moody Tunes</title>
+    <style>
+        #searchInput {
+            width: 300px;
+            padding: 10px;
+            font-size: 16px;
+        }
+        #searchButton {
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+        /* Basic styling */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: azure;
+        }
+        header {
+            background-color: #054547;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .song-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .song-item {
+            border-bottom: 1px solid #ccc;
+            padding: 10px;
+        }
+        .song-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Moody Tunes</h1>
+    </header>
+    <div class="container">
+        <h2>Search for Songs</h2>
+        <input type="text" id="searchInput" placeholder="Enter mood...">
+        <button onclick="searchSongs()">Search</button>
+        <h2>Matching Songs</h2>
+        <ul id="songList" class="song-list"></ul>
+    </div>
+
+    <script>
+         const searchInput = document.getElementById('searchInput');
+        const searchButton = document.getElementById('searchButton');
+
+        // Check if browser supports SpeechRecognition
+        if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            const recognition = new SpeechRecognition();
+
+            recognition.onstart = function() {
+                console.log('Voice recognition started...');
+            };
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                console.log('Transcript:', transcript);
+                searchInput.value = transcript;
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Voice recognition error:', event.error);
+            };
+
+            searchButton.addEventListener('click', function() {
+                recognition.start();
+            });
+        } else {
+            console.error('Speech recognition not supported in this browser.');
+        }
+        // Mocked song data
+        const songs = [
+            { title: "Song 1", artist: "Artist 1", mood: "Happy" },
+            { title: "Song 2", artist: "Artist 2", mood: "Sad" },
+            { title: "Song 3", artist: "Artist 3", mood: "Relaxed" },
+            { title: "Song 4", artist: "Artist 4", mood: "Happy" }
+        ];
+
+        // Function to search songs based on mood
+        function searchSongs() {
+            const mood = document.getElementById('searchInput').value.toLowerCase();
+            const matchingSongs = songs.filter(song => song.mood.toLowerCase() === mood);
+            displaySongs(matchingSongs);
+        }
+
+        // Function to display matching songs in the UI
+        function displaySongs(songs) {
+            const songList = document.getElementById('songList');
+            songList.innerHTML = ''; // Clear previous results
+            songs.forEach(song => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('song-item');
+                listItem.innerHTML = `<strong>${song.title}</strong> by ${song.artist}`;
+                songList.appendChild(listItem);
+            });
+            if (songs.length === 0) {
+                const listItem = document.createElement('li');
+                listItem.classList.add('song-item');
+                listItem.textContent = 'No songs found for this mood.';
+                songList.appendChild(listItem);
+            }
+        }
+    </script>
+</body>
+</html>
